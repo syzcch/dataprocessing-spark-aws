@@ -4,6 +4,7 @@ import net.quantiful.dataprocess.model.CommentObj;
 import net.quantiful.dataprocess.model.DataSetObj;
 import net.quantiful.dataprocess.repository.CommentMapper;
 import net.quantiful.dataprocess.repository.DataSetMapper;
+import net.quantiful.dataprocess.service.LoadService;
 import net.quantiful.dataprocess.utils.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,12 @@ public class StartupRunner implements CommandLineRunner {
 
     @Value("${loaddata}")
     private String loadData;
+
+    @Value("${loaddatatospark}")
+    private String loaddatatospark;
+
+    @Value("${s3-dataset}")
+    private String s3Dataset;
 
     @Autowired
     DataSetMapper dataSetMapper;
@@ -63,6 +70,16 @@ public class StartupRunner implements CommandLineRunner {
                 }
 
             }
+        }
+
+        if(loaddatatospark.toLowerCase().equals("yes")){
+
+            List<String[]> dataSetList = DataLoader.loadCSV(dataSet);
+            List<DataSetObj> dataSetObj = DataLoader.buildDataSet(dataSetList);
+            System.out.println(dataSetObj.size());
+
+            LoadService.runit(dataSetObj);
+
         }
 
         TestHive.runit();

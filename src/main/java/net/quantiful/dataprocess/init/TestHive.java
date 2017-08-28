@@ -29,6 +29,7 @@ public class TestHive {
                 System.out.println(res.getInt(2) + "\t" + res.getString(1));
             }
             stmt.close();
+            stmt = null;
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -49,7 +50,10 @@ public class TestHive {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            stmt.close();
+            if (stmt != null) {
+                stmt.close();
+                stmt = null;
+            }
         }
     }
 
